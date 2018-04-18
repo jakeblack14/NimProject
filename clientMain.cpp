@@ -57,7 +57,7 @@ int clientMain(int argc, char *argv[], std::string playerName)
 			
 		if (answer >= 1 && answer <= numServers) {
 			// Extract the opponent's info from the server[] array
-			std::string serverName;
+			std::string serverName; 
 			serverName = serverArray[answer-1].name;		// Adjust for 0-based array
 			host = serverArray[answer-1].host;
 			port = serverArray[answer-1].port;
