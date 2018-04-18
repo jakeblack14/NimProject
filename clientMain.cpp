@@ -14,7 +14,7 @@ int clientMain(int argc, char *argv[], std::string playerName)
 	SOCKET s = connectsock("","","udp");	// Create a socket  (Don't need to designate a host or port for UDP)
 
 	// Find all TicTacToe servers on our subnet
-	std::cout << std::endl << "Looking for TicTacToe servers ... " << std::endl;
+	std::cout << std::endl << "Looking for Nim servers ... " << std::endl;
 
 	char broadcastAddress[v4AddressSize];
 	char myIPAddress[v4AddressSize];
@@ -23,13 +23,13 @@ int clientMain(int argc, char *argv[], std::string playerName)
 		std::cerr << "No interface found that supports broadcasting." << std::endl;
 		return -1;
 	}
-	int numServers = getServers(s, broadcastAddress, TicTacToe_UDPPORT, serverArray);
+	int numServers = getServers(s, broadcastAddress, NIM_UDPPORT, serverArray);
 
 	if (numServers == 0) {
-		std::cout << std::endl << "Sorry.  No TicTacToe servers were found.  Try again later." << std::endl << std::endl;
+		std::cout << std::endl << "Sorry.  No Nim servers were found.  Try again later." << std::endl << std::endl;
 	} else {
 		// Display the list of servers found
-		std::cout << std::endl << "Found TicTacToe server";
+		std::cout << std::endl << "Found Nim server";
 		if (numServers == 1) {
 			std::cout << ":" << "  " << serverArray[0].name << std::endl;
 		} else {
@@ -62,9 +62,9 @@ int clientMain(int argc, char *argv[], std::string playerName)
 			host = serverArray[answer-1].host;
 			port = serverArray[answer-1].port;
 
-			// Append playerName to the TicTacToe_CHALLENGE string & send a challenge to host:port
+			// Append playerName to the NIM_CHALLENGE string & send a challenge to host:port
 			char buffer[MAX_SEND_BUF];
-			strcpy_s(buffer,TicTacToe_CHALLENGE);
+			strcpy_s(buffer, NIM_CHALLENGE);
 			strcat_s(buffer,playerName.c_str());
 			int len = UDP_send(s, buffer, strlen(buffer)+1,(char*)host.c_str(), (char*)port.c_str());
 

@@ -1,4 +1,4 @@
-#include "TicTacToe.h"
+#include "nim.h"
 #include <WinSock2.h>
 #include <iostream>
 
@@ -25,7 +25,7 @@ int getServers(SOCKET s, char *broadcastAddress, char *broadcastPort, ServerStru
 	// The last parameter, serverArray[], will contain all of the servers' names, IP addresses and port numbers.
 
 	int numServers = 0;
-	char ticTacToe_Query[5] = TicTacToe_QUERY;
+	char ticTacToe_Query[5] = NIM_QUERY;
 	int numSent = UDP_send(s, ticTacToe_Query, 5, broadcastAddress, broadcastPort);
 
 	// Send TicTacToe_QUERY to broadcastAddress using broadcastPort
