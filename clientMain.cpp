@@ -1,6 +1,6 @@
 // clientMain.cpp
 //   This function serves as the "main" function for the client-side
-#include "TicTacToe.h"
+#include "nim.h"
 #include <iostream>
 #include <string>
 #include <WinSock2.h>
