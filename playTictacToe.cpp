@@ -126,6 +126,9 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 	while (winner == noWinner) {
 		if (myMove) {
 			// Get my move & display board
+
+		    // Probably need to to put the while loop here to check for comments. 
+
 			move = getMove(board, localPlayer);
 			std::cout << "Board after your move:" << std::endl;
 			updateBoard(board,move,localPlayer);
