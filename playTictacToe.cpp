@@ -46,7 +46,7 @@ std::vector<RockPile> initializeBoard()
 	return rp;
 }
 
-void updateBoard( vector<RockPile> rp, int move, int Player)
+void updateBoard( vector<RockPile> & rp, int move, int Player)
 {
 	int numRocks;
 	int pile;
@@ -54,26 +54,27 @@ void updateBoard( vector<RockPile> rp, int move, int Player)
 	string myPile;
 	string myRocks;
 	string isZero;
-	char *intStr;
+	char intStr[3];
 	itoa(move,intStr, 10);
 	string StrMove = string(intStr);
 
-	isZero = StrMove.substr(2, 1);
+	isZero = StrMove.substr(1, 1);
+	myPile = StrMove.substr(0, 1);
 
 	if (isZero == "0")
 	{
-		myRocks = StrMove.substr(3, 1);
+		myRocks = StrMove.substr(2, 1);
 	}
 	else
 	{
-		myRocks = StrMove.substr(2,2);
+		myRocks = StrMove.substr(1,2);
 	}
 
 	pile = stoi(myPile);
 	numRocks = stoi(myRocks);
 
 
-	rp[pile].numRocks = rp[pile].numRocks - numRocks;
+	rp[pile-1].numRocks = rp[pile].numRocks - numRocks;
 }
 
 void displayBoard()
@@ -163,7 +164,7 @@ int getMove(int numPiles, int Player)
 
 		
 		// Check here to see if they can pick from that pile or not. if (board[move] == 'X' || board[move] == 'O') move = 0;
-	} while (pileNumber < 3 || pileNumber > numPiles); // Change this to check boundaries of the piles.
+	} while (pileNumber < 1 || pileNumber > numPiles); // Change this to check boundaries of the piles.
 
 	return move;
 }
@@ -173,7 +174,6 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 	// This function plays the game and returns the value: winner.  This value 
 	// will be one of the following values: noWinner, xWinner, oWinner, TIE, ABORT
 	int winner = noWinner;
-	char board[10];
 	int opponent;
 	int move;
 	bool myMove;
@@ -190,7 +190,6 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 		myMove = false;
 	}
 
-	rp = initializeBoard();
 	displayBoard();
 
 	while (winner == noWinner) {
@@ -244,7 +243,7 @@ Task 2: (i) Insert code inside this IF statement that will accept a null-termina
 		if (winner == ABORT) {
 			std::cout << timestamp() << " - No response from opponent.  Aborting the game..." << std::endl;
 		} else {
-			winner = check4Win(board);
+			//winner = check4Win(board);
 		}
 		
 		if (winner == localPlayer)
