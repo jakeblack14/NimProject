@@ -46,8 +46,9 @@ std::vector<RockPile> initializeBoard()
 	return rp;
 }
 
-void updateBoard( char board[10], int move, int Player)
+void updateBoard( vector<RockPile> rp, int move, int Player)
 {
+	
 	if (Player == X_PLAYER) {
 		board[move] = 'X';
 	} else if (Player == O_PLAYER) {
@@ -126,19 +127,20 @@ int check4Win(char board[10])
 	return winner;
 }
 
-int getMove(char board[10], int Player)
+int getMove(int numPiles, int Player)
 {
 	int move;
 	char move_str[3];
+	char pileNumber[1];
 
 	std::cout << "What Pile and How Many Rocks do you want to take? ";
 
 	do {
 		std::cin  >> move_str;
-		//move = atoi(move_str);
-		string pileNumber = move_str
-		if (board[move] == 'X' || board[move] == 'O') move = 0;
-	} while (move < 1 || move > 9);
+		move = atoi(move_str);
+		
+		// Check here to see if they can pick from that pile or not. if (board[move] == 'X' || board[move] == 'O') move = 0;
+	} while (move < 3 || move > numPiles); // Change this to check boundaries of the piles.
 
 	return move;
 }
@@ -152,6 +154,8 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 	int opponent;
 	int move;
 	bool myMove;
+	vector<RockPile> rp;
+	
 
 	if (localPlayer == X_PLAYER) {
 		std::cout << "Playing as X" << std::endl;
@@ -163,7 +167,7 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 		myMove = false;
 	}
 
-	initializeBoard();
+	rp = initializeBoard();
 	displayBoard();
 
 	while (winner == noWinner) {
@@ -172,9 +176,9 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 
 		    // Probably need to to put the while loop here to check for comments. 
 
-			move = getMove(board, localPlayer);
+			move = getMove(rp.size, localPlayer);
 			std::cout << "Board after your move:" << std::endl;
-			updateBoard(board,move,localPlayer);
+			updateBoard(rp,move,localPlayer);
 			displayBoard();
 
 			// Send move to opponent
@@ -200,7 +204,7 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 				char remote_Port[portNumberSize];
 				int numRecv = UDP_recv(s, recvBuf, MAX_RECV_BUF-1, remoteHost, remote_Port);
 				int opponentMove = atoi(recvBuf);
-				updateBoard(board, opponentMove, opponent);
+				updateBoard(rp, opponentMove, opponent);
 				displayBoard();
 /****			
 Task 2: (i) Insert code inside this IF statement that will accept a null-terminated C-string from your
