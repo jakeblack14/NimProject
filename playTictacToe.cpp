@@ -6,12 +6,42 @@
 #include <WinSock2.h>
 #include <iostream>
 #include <string>
+#include <vector>
 
-void initializeBoard( char board[10] )
+std::vector<RockPile> initializeBoard()
 {
-	char initBoard[10] = {'0','1','2','3','4','5','6','7','8','9'};
-	for (int i=0; i<10; i++)
-		board[i] = initBoard[i];
+	int numPiles;
+	int totalRocks = 0;
+	std::string numPilesStr;
+	std::string test = "50403030209";
+
+	numPilesStr = test.substr(0, 1);
+	test.erase(0, 1);
+	numPiles = stoi(numPilesStr);
+
+	std::vector<RockPile> rp;
+
+	rp.resize(numPiles);
+
+	for (int i = 0; i < numPiles; i++)
+	{
+		rp[i].pileNum = i + 1;
+		rp[i].numRocks = stoi(test.substr(0, 2));
+		test.erase(0, 2);
+
+		totalRocks += rp[i].numRocks;
+	}
+	//do {
+	//	std::cout << "pile num: ";
+	//	std::cin >> rp.pileNum;
+	//	if (rp.pileNum < 3 || rp.pileNum > 9)
+	//	{
+	//		std::cout << "The number of rock piles must be between 3 and 9, please enter a new number..." << std::endl;
+	//		pileGood = false;
+	//	}
+	//} while (pileGood != true);
+
+	return rp;
 }
 
 void updateBoard( char board[10], int move, int Player)
@@ -24,14 +54,27 @@ void updateBoard( char board[10], int move, int Player)
 		std::cout << "Problem with updateBoard function!" << std::endl;
 }
 
-void displayBoard( char board[10] )
+void displayBoard()
 {
+	std::vector<RockPile> rpc;
+	rpc = initializeBoard();
+	int numPiles;
+	numPiles = rpc.back().pileNum;
+
 	std::cout << std::endl;
-	std::cout << board[7] << " | " << board[8] << " | " << board[9] << std::endl;
-	std::cout << "__+___+__" << std::endl;
-	std::cout << board[4] << " | " << board[5] << " | " << board[6] << std::endl;
-	std::cout << "__+___+__" << std::endl;
-	std::cout << board[1] << " | " << board[2] << " | " << board[3] << std::endl;
+	std::cout << "Nim Board: " << std::endl;
+	std::cout << "----------------------------------------------------------------" << std::endl;
+	for (int i = 0; i < numPiles; i++)
+	{
+		std::cout << "Rock Pile #" << i + 1 << " ->";
+		for (int j = 0; j < rpc[i].numRocks; j++)
+		{
+			std::cout << " *";
+		}
+		std::cout << "( " << rpc[i].numRocks << ")";
+		std::cout << " <- " << "Rock Pile #" << i + 1 << std::endl;
+	}
+	std::cout << "----------------------------------------------------------------" << std::endl;
 	std::cout << std::endl;
 }
 
@@ -84,7 +127,7 @@ int check4Win(char board[10])
 int getMove(char board[10], int Player)
 {
 	int move;
-	char move_str[80];
+	char move_str[3];
 
 	std::cout << "Where do you want to place your ";
 	char mark = (Player == X_PLAYER) ? 'X' : 'O';
@@ -158,7 +201,7 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 				int numRecv = UDP_recv(s, recvBuf, MAX_RECV_BUF-1, remoteHost, remote_Port);
 				int opponentMove = atoi(recvBuf);
 				updateBoard(board, opponentMove, opponent);
-				displayBoard(board);
+				displayBoard();
 /****			
 Task 2: (i) Insert code inside this IF statement that will accept a null-terminated C-string from your
 		opponent that represents their move.  Convert that string to an integer and then

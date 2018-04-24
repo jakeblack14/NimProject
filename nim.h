@@ -31,6 +31,11 @@ struct ServerStruct {
 	std::string port;
 };
 
+struct RockPile {
+	int pileNum;
+	int numRocks;
+};
+
 void playNim(SOCKET, bool, char*, bool, bool, char*, char*, bool);
 SOCKET connectsock(const char*, const char*, const char*);
 SOCKET passivesock(const char*, const char*);
