@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 
+using namespace std;
+
 std::vector<RockPile> initializeBoard()
 {
 	int numPiles;
@@ -129,14 +131,12 @@ int getMove(char board[10], int Player)
 	int move;
 	char move_str[3];
 
-	std::cout << "Where do you want to place your ";
-	char mark = (Player == X_PLAYER) ? 'X' : 'O';
-	std::cout << mark << "? " << std::endl;
+	std::cout << "What Pile and How Many Rocks do you want to take? ";
 
 	do {
-		std::cout << "Your move? ";
 		std::cin  >> move_str;
-		move = atoi(move_str);
+		//move = atoi(move_str);
+		string pileNumber = move_str
 		if (board[move] == 'X' || board[move] == 'O') move = 0;
 	} while (move < 1 || move > 9);
 
@@ -163,8 +163,8 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 		myMove = false;
 	}
 
-	initializeBoard(board);
-	displayBoard(board);
+	initializeBoard();
+	displayBoard();
 
 	while (winner == noWinner) {
 		if (myMove) {
@@ -175,7 +175,7 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 			move = getMove(board, localPlayer);
 			std::cout << "Board after your move:" << std::endl;
 			updateBoard(board,move,localPlayer);
-			displayBoard(board);
+			displayBoard();
 
 			// Send move to opponent
 /****			
