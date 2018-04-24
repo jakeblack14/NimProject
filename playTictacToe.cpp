@@ -48,13 +48,32 @@ std::vector<RockPile> initializeBoard()
 
 void updateBoard( vector<RockPile> rp, int move, int Player)
 {
+	int numRocks;
+	int pile;
 	
-	if (Player == X_PLAYER) {
-		board[move] = 'X';
-	} else if (Player == O_PLAYER) {
-		board[move] = 'O';
-	} else
-		std::cout << "Problem with updateBoard function!" << std::endl;
+	string myPile;
+	string myRocks;
+	string isZero;
+	char *intStr;
+	itoa(move,intStr, 10);
+	string StrMove = string(intStr);
+
+	isZero = StrMove.substr(2, 1);
+
+	if (isZero == "0")
+	{
+		myRocks = StrMove.substr(3, 1);
+	}
+	else
+	{
+		myRocks = StrMove.substr(2,2);
+	}
+
+	pile = stoi(myPile);
+	numRocks = stoi(myRocks);
+
+
+	rp[pile].numRocks = rp[pile].numRocks - numRocks;
 }
 
 void displayBoard()
@@ -130,17 +149,21 @@ int check4Win(char board[10])
 int getMove(int numPiles, int Player)
 {
 	int move;
-	char move_str[3];
-	char pileNumber[1];
+	string move_str;
+	string pileString;
+	int pileNumber;
 
 	std::cout << "What Pile and How Many Rocks do you want to take? ";
 
 	do {
 		std::cin  >> move_str;
-		move = atoi(move_str);
+		pileString = move_str.substr(0, 1);
+		move = atoi(move_str.c_str());
+		pileNumber = stoi(pileString);
+
 		
 		// Check here to see if they can pick from that pile or not. if (board[move] == 'X' || board[move] == 'O') move = 0;
-	} while (move < 3 || move > numPiles); // Change this to check boundaries of the piles.
+	} while (pileNumber < 3 || pileNumber > numPiles); // Change this to check boundaries of the piles.
 
 	return move;
 }
@@ -176,7 +199,7 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 
 		    // Probably need to to put the while loop here to check for comments. 
 
-			move = getMove(rp.size, localPlayer);
+			move = getMove(rp.size(), localPlayer);
 			std::cout << "Board after your move:" << std::endl;
 			updateBoard(rp,move,localPlayer);
 			displayBoard();
