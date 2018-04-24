@@ -8,7 +8,6 @@
 #define NIM_CHALLENGE	"Player="
 
 static char NIM_UDPPORT[] = "29333";
-
 const int v4AddressSize = 16;
 const int portNumberSize = 10;
 const int WAIT_TIME = 120;

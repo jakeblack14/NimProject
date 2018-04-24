@@ -54,7 +54,7 @@ void updateBoard( vector<RockPile> & rp, int move, int Player)
 	string myPile;
 	string myRocks;
 	string isZero;
-	char intStr[3];
+	char intStr[4];
 	itoa(move,intStr, 10);
 	string StrMove = string(intStr);
 
@@ -77,12 +77,10 @@ void updateBoard( vector<RockPile> & rp, int move, int Player)
 	rp[pile-1].numRocks = rp[pile].numRocks - numRocks;
 }
 
-void displayBoard()
+void displayBoard(vector<RockPile> rp)
 {
-	std::vector<RockPile> rpc;
-	rpc = initializeBoard();
 	int numPiles;
-	numPiles = rpc.back().pileNum;
+	numPiles = rp.back().pileNum;
 
 	std::cout << std::endl;
 	std::cout << "Nim Board: " << std::endl;
@@ -90,11 +88,11 @@ void displayBoard()
 	for (int i = 0; i < numPiles; i++)
 	{
 		std::cout << "Rock Pile #" << i + 1 << " ->";
-		for (int j = 0; j < rpc[i].numRocks; j++)
+		for (int j = 0; j < rp[i].numRocks; j++)
 		{
 			std::cout << " *";
 		}
-		std::cout << "( " << rpc[i].numRocks << ")";
+		std::cout << "( " << rp[i].numRocks << ")";
 		std::cout << " <- " << "Rock Pile #" << i + 1 << std::endl;
 	}
 	std::cout << "----------------------------------------------------------------" << std::endl;
@@ -174,6 +172,7 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 	// This function plays the game and returns the value: winner.  This value 
 	// will be one of the following values: noWinner, xWinner, oWinner, TIE, ABORT
 	int winner = noWinner;
+	char board[10];
 	int opponent;
 	int move;
 	bool myMove;
@@ -190,7 +189,9 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 		myMove = false;
 	}
 
-	displayBoard();
+	rp = initializeBoard();
+	displayBoard(rp);
+	
 
 	while (winner == noWinner) {
 		if (myMove) {
@@ -201,7 +202,7 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 			move = getMove(rp.size(), localPlayer);
 			std::cout << "Board after your move:" << std::endl;
 			updateBoard(rp,move,localPlayer);
-			displayBoard();
+			displayBoard(rp);
 
 			// Send move to opponent
 /****			
@@ -227,7 +228,7 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 				int numRecv = UDP_recv(s, recvBuf, MAX_RECV_BUF-1, remoteHost, remote_Port);
 				int opponentMove = atoi(recvBuf);
 				updateBoard(rp, opponentMove, opponent);
-				displayBoard();
+				displayBoard(rp);
 /****			
 Task 2: (i) Insert code inside this IF statement that will accept a null-terminated C-string from your
 		opponent that represents their move.  Convert that string to an integer and then
@@ -243,7 +244,7 @@ Task 2: (i) Insert code inside this IF statement that will accept a null-termina
 		if (winner == ABORT) {
 			std::cout << timestamp() << " - No response from opponent.  Aborting the game..." << std::endl;
 		} else {
-			//winner = check4Win(board);
+			winner = check4Win(board);
 		}
 		
 		if (winner == localPlayer)
