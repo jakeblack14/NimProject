@@ -12,6 +12,10 @@ int serverMain(int argc, char *argv[], std::string playerName)
 	std::string host;
 	std::string port;
 	char responseStr[MAX_SEND_BUF];
+	char yesStr[MAX_SEND_BUF];
+	char yes[MAX_SEND_BUF] = "YES";
+	char no[MAX_SEND_BUF] = "NO";
+
 	
 	s = passivesock(NIM_UDPPORT,"udp");
 
@@ -33,6 +37,21 @@ int serverMain(int argc, char *argv[], std::string playerName)
 			char *startOfName = strstr(buffer,NIM_CHALLENGE);
 			if (startOfName != NULL) {
 				std::cout << std::endl << "You have been challenged by " << startOfName+strlen(NIM_CHALLENGE) << std::endl;
+
+				std::cout << "Would you like to challenge " << startOfName + strlen(NIM_CHALLENGE) << std::endl;
+				std::cout << "YES/NO" << std::endl;
+				std::cin >> yesStr;
+				
+
+
+				if (yesStr[0] == 'y' || yesStr[0] == 'Y')
+				{
+					UDP_send(s, yes, strlen(responseStr) + 1, (char*)host.c_str(), (char*)port.c_str());
+				}
+				else
+				{
+					UDP_send(s, no, strlen(responseStr) + 1, (char*)host.c_str(), (char*)port.c_str());
+				}
 			}
 			
 			// Play the game.  You are the 'O' player

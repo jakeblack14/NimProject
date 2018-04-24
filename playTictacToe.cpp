@@ -74,7 +74,7 @@ void updateBoard( vector<RockPile> & rp, int move, int Player)
 	numRocks = stoi(myRocks);
 
 
-	rp[pile-1].numRocks = rp[pile].numRocks - numRocks;
+	rp[pile-1].numRocks = rp[pile-1].numRocks - numRocks;
 }
 
 void displayBoard(vector<RockPile> rp)
@@ -211,8 +211,8 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 ****/
 			std::string moveString = std::to_string(move);
 
-			char moveMade[2];
-			_itoa_s(move, moveMade, 2, 10);
+			char moveMade[4];
+			itoa(move, moveMade, 10);
 			int numSent = UDP_send(s, moveMade, strlen(moveMade)+1, remoteIP.c_str(), remotePort.c_str());
 			
 		} else {
