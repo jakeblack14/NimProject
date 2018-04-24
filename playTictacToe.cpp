@@ -10,12 +10,14 @@
 
 using namespace std;
 
-std::vector<RockPile> initializeBoard()
+std::vector<RockPile> initializeBoard(string test)
 {
 	int numPiles;
 	int totalRocks = 0;
 	std::string numPilesStr;
-	std::string test = "50403030209";
+
+// ADD CODE HERE TO CHECK THE BOUNDARIES
+
 
 	numPilesStr = test.substr(0, 1);
 	test.erase(0, 1);
@@ -189,9 +191,14 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 		myMove = false;
 	}
 
-	rp = initializeBoard();
+	char test[MAX_SEND_BUF];
+	cout << "Please Enter a string to initialize board (Mnn)" << endl;
+	cin >> test;
+
+	rp = initializeBoard(test);
 	displayBoard(rp);
 	
+	int numSent = UDP_send(s, test, strlen(test) + 1, remoteIP.c_str(), remotePort.c_str());
 
 	while (winner == noWinner) {
 		if (myMove) {
@@ -218,6 +225,7 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 		} else {
 			std::cout << "Waiting for your opponent's move..." << std::endl << std::endl;
 			//Get opponent's move & display board
+			
 			int status = wait(s,WAIT_TIME,0);
 			if (status > 0) {
 				

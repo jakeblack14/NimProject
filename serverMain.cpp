@@ -52,6 +52,14 @@ int serverMain(int argc, char *argv[], std::string playerName)
 				{
 					UDP_send(s, no, strlen(responseStr) + 1, (char*)host.c_str(), (char*)port.c_str());
 				}
+
+				int len = UDP_recv(s, buffer, MAX_RECV_BUF, (char*)host.c_str(), (char*)port.c_str());
+				if (buffer[0] == 'g' || buffer[0] == 'G')
+				{
+
+					int winner = playTicTacToe(s, (char*)playerName.c_str(), (char*)host.c_str(), (char*)port.c_str(), O_PLAYER);
+					finished = true;
+				}
 			}
 			
 			// Play the game.  You are the 'O' player
