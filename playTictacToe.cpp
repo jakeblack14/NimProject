@@ -161,14 +161,9 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 		std::cout << "Playing as player 1" << std::endl;
 		opponent = O_PLAYER;
 		myMove = true;
-<<<<<<< HEAD
 	}
 	else {
-		std::cout << "Playing as O" << std::endl;
-=======
-	} else {
 		std::cout << "Playing as player 2" << std::endl;
->>>>>>> 3fc8b51c4604f21d0ffec4a87c9d8d4d646df2aa
 		opponent = X_PLAYER;
 		myMove = false;
 	}
