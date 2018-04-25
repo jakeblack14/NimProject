@@ -80,7 +80,7 @@ int clientMain(int argc, char *argv[], std::string playerName)
 
 				int len = UDP_recv(s, board, MAX_RECV_BUF, (char*)host.c_str(), (char*)port.c_str());
 
-				int winner = playTicTacToe(s, serverName, host, port, X_PLAYER, board);
+				playTicTacToe(s, serverName, host, port, X_PLAYER, board);
 			}
 		}
 	}
