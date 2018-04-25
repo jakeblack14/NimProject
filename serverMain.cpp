@@ -42,7 +42,7 @@ int serverMain(int argc, char *argv[], std::string playerName)
 			if (startOfName != NULL) {
 				std::cout << std::endl << "You have been challenged by " << startOfName+strlen(NIM_CHALLENGE) << std::endl;
 
-				std::cout << "Would you like to challenge " << startOfName + strlen(NIM_CHALLENGE) << std::endl;
+				std::cout << "Do you accept " << startOfName + strlen(NIM_CHALLENGE) << " challenge?" << std::endl;
 				std::cout << "YES/NO" << std::endl;
 				std::cin >> yesStr;
 				
