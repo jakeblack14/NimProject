@@ -52,7 +52,8 @@ int serverMain(int argc, char *argv[], std::string playerName)
 				{
 					UDP_send(s, yes, strlen(responseStr) + 1, (char*)host.c_str(), (char*)port.c_str());
 
-					
+					int len = UDP_recv(s, buffer, MAX_RECV_BUF, (char*)host.c_str(), (char*)port.c_str());
+					cout << buffer << endl;
 					cout << "Please Enter a string to initialize board (Mnn)" << endl;
 					cin >> test;
 					int numSent = UDP_send(s, test, strlen(test) + 1, host.c_str(), port.c_str());
@@ -63,7 +64,7 @@ int serverMain(int argc, char *argv[], std::string playerName)
 					UDP_send(s, no, strlen(responseStr) + 1, (char*)host.c_str(), (char*)port.c_str());
 				}
 
-				int len = UDP_recv(s, buffer, MAX_RECV_BUF, (char*)host.c_str(), (char*)port.c_str());
+				
 				if (buffer[0] == 'g' || buffer[0] == 'G')
 				{
 
