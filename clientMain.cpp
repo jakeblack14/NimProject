@@ -7,7 +7,6 @@
 
 int clientMain(int argc, char *argv[], std::string playerName)
 {
-	bool finished = false;
 	char yes[MAX_SEND_BUF] = "YES";
 	char no[MAX_SEND_BUF] = "NO";
 	char great[MAX_SEND_BUF] = "Great!";
@@ -16,6 +15,7 @@ int clientMain(int argc, char *argv[], std::string playerName)
 	std::string port;
 	ServerStruct serverArray[MAX_SERVERS];
 	char received[MAX_RECV_BUF];
+	bool finished = false;
 
 	SOCKET s = connectsock("","","udp");	// Create a socket  (Don't need to designate a host or port for UDP)
 
@@ -74,10 +74,8 @@ int clientMain(int argc, char *argv[], std::string playerName)
 			strcat_s(buffer,playerName.c_str());
 			int len = UDP_send(s, buffer, strlen(buffer)+1,(char*)host.c_str(), (char*)port.c_str());
 			
-			
 		}
 	}
-
 	while (!finished)
 	{
 		char stuff[MAX_RECV_BUF];
@@ -94,7 +92,6 @@ int clientMain(int argc, char *argv[], std::string playerName)
 		int winner = playTicTacToe(s, (char*)playerName.c_str(), (char*)host.c_str(), (char*)port.c_str(), O_PLAYER, board);
 		finished = true;
 	}
-
 	closesocket(s);
 	return 0;
 }

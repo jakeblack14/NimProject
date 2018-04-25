@@ -109,11 +109,11 @@ int check4Win(int & totalRocks)
 	{
 		if (winner == noWinner) {
 			if (totalRocks == 1) {
-				winner = 0;
+				winner = 1;
 			}
 			else
 			{
-				winner = 1;
+				winner = 0;
 			}
 		}
 	}
@@ -171,7 +171,7 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 	rp = initializeBoard(test,totalRocks);
 	displayBoard(rp);
 
-	int numSent = UDP_send(s, test, strlen(test) + 1, remoteIP.c_str(), remotePort.c_str());
+	//int numSent = UDP_send(s, test, strlen(test) + 1, remoteIP.c_str(), remotePort.c_str());
 	
 
 	while (winner == noWinner) {
@@ -194,7 +194,7 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 
 			char moveMade[4];
 			itoa(move, moveMade, 10);
-			//int numSent = UDP_send(s, moveMade, strlen(moveMade) + 1, remoteIP.c_str(), remotePort.c_str());
+			int numSent = UDP_send(s, moveMade, strlen(moveMade) + 1, remoteIP.c_str(), remotePort.c_str());
 
 		}
 		else {
@@ -231,16 +231,14 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 		else {
 			winner = check4Win(totalRocks);
 		}
-		if (winner != -5)
-		{	
-		}
-		else
+	
+		if(winner == 1 || winner == 0)
 		{
 			if (winner == localPlayer)
 				std::cout << "You WIN!" << std::endl;
 			else if (winner == TIE)
 				std::cout << "It's a tie." << std::endl;
-			else if (winner == opponent)
+			else 
 				std::cout << "I'm sorry.  You lost" << std::endl;
 		}
 	}
