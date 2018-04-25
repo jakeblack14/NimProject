@@ -10,6 +10,7 @@ int clientMain(int argc, char *argv[], std::string playerName)
 	std::string host;
 	std::string port;
 	ServerStruct serverArray[MAX_SERVERS];
+	char received[MAX_RECV_BUF];
 
 	SOCKET s = connectsock("","","udp");	// Create a socket  (Don't need to designate a host or port for UDP)
 
@@ -69,7 +70,7 @@ int clientMain(int argc, char *argv[], std::string playerName)
 			int len = UDP_send(s, buffer, strlen(buffer)+1,(char*)host.c_str(), (char*)port.c_str());
 
 			// Play the game.  You are the 'X' player
-			int winner = playTicTacToe(s, serverName, host, port, X_PLAYER);
+			int winner = playTicTacToe(s, serverName, host, port, X_PLAYER,received);
 		}
 	}
 

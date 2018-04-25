@@ -10,13 +10,13 @@
 
 using namespace std;
 
-std::vector<RockPile> initializeBoard(string test)
+std::vector<RockPile> initializeBoard(string test, int & totalRocks)
 {
 	int numPiles;
-	int totalRocks = 0;
+	
 	std::string numPilesStr;
 
-// ADD CODE HERE TO CHECK THE BOUNDARIES
+	// ADD CODE HERE TO CHECK THE BOUNDARIES
 
 
 	numPilesStr = test.substr(0, 1);
@@ -48,16 +48,16 @@ std::vector<RockPile> initializeBoard(string test)
 	return rp;
 }
 
-void updateBoard( vector<RockPile> & rp, int move, int Player)
+void updateBoard(vector<RockPile> & rp, int move, int Player, int & totalRocks)
 {
 	int numRocks;
 	int pile;
-	
+
 	string myPile;
 	string myRocks;
 	string isZero;
 	char intStr[4];
-	itoa(move,intStr, 10);
+	itoa(move, intStr, 10);
 	string StrMove = string(intStr);
 
 	isZero = StrMove.substr(1, 1);
@@ -69,14 +69,15 @@ void updateBoard( vector<RockPile> & rp, int move, int Player)
 	}
 	else
 	{
-		myRocks = StrMove.substr(1,2);
+		myRocks = StrMove.substr(1, 2);
 	}
 
 	pile = stoi(myPile);
 	numRocks = stoi(myRocks);
 
 
-	rp[pile-1].numRocks = rp[pile-1].numRocks - numRocks;
+	rp[pile - 1].numRocks = rp[pile - 1].numRocks - numRocks;
+	totalRocks -= numRocks;
 }
 
 void displayBoard(vector<RockPile> rp)
@@ -101,49 +102,25 @@ void displayBoard(vector<RockPile> rp)
 	std::cout << std::endl;
 }
 
-int check4Win(char board[10])
+int check4Win(int & totalRocks)
 {
 	int winner = noWinner;
-
-	// Check for vertical winners
-	int i = 1;
-	while (winner == noWinner && i < 4) {
-		if (board[i] == board[i+3] && board[i] == board[i+6]) {
-			winner = (board[i] == 'X') ? xWinner : oWinner;
-		}
-		i++;
-	}
-
-	// Check for horizontal winners
-	i = 1;
-	while (winner == noWinner && i < 8) {
-		if (board[i] == board[i+1] && board[i] == board[i+2]) {
-			winner = (board[i] == 'X') ? xWinner : oWinner;
-		}
-		i  += 3;
-	}
-
-	// Check for diagonal winners
-	if (winner == noWinner) {
-		if ( (board[1] == board[5] && board[1] == board[9]) ||
-			 (board[3] == board[5] && board[3] == board[7]) ) {
-			winner = (board[5] == 'X') ? xWinner : oWinner;
+	if (totalRocks <= 1)
+	{
+		if (winner == noWinner) {
+			if (totalRocks == 1) {
+				winner = 0;
+			}
+			else
+			{
+				winner = 1;
+			}
 		}
 	}
-
-	// Check for tie
-	i = 1;
-	int numMoves = 0;
-	while ( i < 10) {
-		if ( (board[i] == 'X' || board[i] == 'O') ) {
-			numMoves++;
-		}
-		i++;
+	else
+	{
+		winner = -5;
 	}
-	if (winner == noWinner && numMoves == 9)
-		winner = TIE;
-	
-
 	return winner;
 }
 
@@ -157,93 +134,91 @@ int getMove(int numPiles, int Player)
 	std::cout << "What Pile and How Many Rocks do you want to take? ";
 
 	do {
-		std::cin  >> move_str;
+		std::cin >> move_str;
 		pileString = move_str.substr(0, 1);
 		move = atoi(move_str.c_str());
 		pileNumber = stoi(pileString);
 
-		
+
 		// Check here to see if they can pick from that pile or not. if (board[move] == 'X' || board[move] == 'O') move = 0;
 	} while (pileNumber < 1 || pileNumber > numPiles); // Change this to check boundaries of the piles.
 
 	return move;
 }
 
-int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::string remotePort, int localPlayer)
+int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::string remotePort, int localPlayer, char *test)
 {
 	// This function plays the game and returns the value: winner.  This value 
 	// will be one of the following values: noWinner, xWinner, oWinner, TIE, ABORT
 	int winner = noWinner;
-	char board[10];
+	vector<RockPile> rp;
 	int opponent;
 	int move;
+	int totalRocks = 0;
 	bool myMove;
-	vector<RockPile> rp;
-	
 
 	if (localPlayer == X_PLAYER) {
 		std::cout << "Playing as X" << std::endl;
 		opponent = O_PLAYER;
 		myMove = true;
-	} else {
+	}
+	else {
 		std::cout << "Playing as O" << std::endl;
 		opponent = X_PLAYER;
 		myMove = false;
 	}
 
-	char test[MAX_SEND_BUF];
-	cout << "Please Enter a string to initialize board (Mnn)" << endl;
-	cin >> test;
-
-	rp = initializeBoard(test);
+	rp = initializeBoard(test,totalRocks);
 	displayBoard(rp);
-	
+
 	int numSent = UDP_send(s, test, strlen(test) + 1, remoteIP.c_str(), remotePort.c_str());
 
 	while (winner == noWinner) {
 		if (myMove) {
 			// Get my move & display board
 
-		    // Probably need to to put the while loop here to check for comments. 
-
+			// Probably need to to put the while loop here to check for comments. 
+			
 			move = getMove(rp.size(), localPlayer);
 			std::cout << "Board after your move:" << std::endl;
-			updateBoard(rp,move,localPlayer);
+			updateBoard(rp, move, localPlayer,totalRocks);
 			displayBoard(rp);
 
 			// Send move to opponent
-/****			
-	Task 1: "move" is an integer that was assigned a value (from 1 to 9) in the previous code segment.
-	         Add code here to convert "move" to a null-terminated C-string and send it to your opponent at remoteIP using remotePort.
-****/
+			/****
+			Task 1: "move" is an integer that was assigned a value (from 1 to 9) in the previous code segment.
+			Add code here to convert "move" to a null-terminated C-string and send it to your opponent at remoteIP using remotePort.
+			****/
 			std::string moveString = std::to_string(move);
 
 			char moveMade[4];
 			itoa(move, moveMade, 10);
-			int numSent = UDP_send(s, moveMade, strlen(moveMade)+1, remoteIP.c_str(), remotePort.c_str());
-			
-		} else {
+			int numSent = UDP_send(s, moveMade, strlen(moveMade) + 1, remoteIP.c_str(), remotePort.c_str());
+
+		}
+		else {
 			std::cout << "Waiting for your opponent's move..." << std::endl << std::endl;
 			//Get opponent's move & display board
-			
-			int status = wait(s,WAIT_TIME,0);
+
+			int status = wait(s, WAIT_TIME, 0);
 			if (status > 0) {
-				
-			
+
+
 				char recvBuf[MAX_RECV_BUF];
 				char remoteHost[v4AddressSize];
 				char remote_Port[portNumberSize];
-				int numRecv = UDP_recv(s, recvBuf, MAX_RECV_BUF-1, remoteHost, remote_Port);
+				int numRecv = UDP_recv(s, recvBuf, MAX_RECV_BUF - 1, remoteHost, remote_Port);
 				int opponentMove = atoi(recvBuf);
-				updateBoard(rp, opponentMove, opponent);
+				updateBoard(rp, opponentMove, opponent,totalRocks);
 				displayBoard(rp);
-/****			
-Task 2: (i) Insert code inside this IF statement that will accept a null-terminated C-string from your
-		opponent that represents their move.  Convert that string to an integer and then
-		(ii) call a function that will update the game board (see above) using your opponent's move, and
-		(iii) call a function that will display the updated board on your screen.
-****/
-			} else {
+				/****
+				Task 2: (i) Insert code inside this IF statement that will accept a null-terminated C-string from your
+				opponent that represents their move.  Convert that string to an integer and then
+				(ii) call a function that will update the game board (see above) using your opponent's move, and
+				(iii) call a function that will display the updated board on your screen.
+				****/
+			}
+			else {
 				winner = ABORT;
 			}
 		}
@@ -251,16 +226,19 @@ Task 2: (i) Insert code inside this IF statement that will accept a null-termina
 
 		if (winner == ABORT) {
 			std::cout << timestamp() << " - No response from opponent.  Aborting the game..." << std::endl;
-		} else {
-			winner = check4Win(board);
 		}
-		
-		if (winner == localPlayer)
-			std::cout << "You WIN!" << std::endl;
-		else if (winner == TIE)
-			std::cout << "It's a tie." << std::endl;
-		else if (winner == opponent)
-			std::cout << "I'm sorry.  You lost" << std::endl;
+		else {
+			winner = check4Win(totalRocks);
+		}
+		if (winner != -5)
+		{
+			if (winner == localPlayer)
+				std::cout << "You WIN!" << std::endl;
+			else if (winner == TIE)
+				std::cout << "It's a tie." << std::endl;
+			else if (winner == opponent)
+				std::cout << "I'm sorry.  You lost" << std::endl;
+		}
 	}
 
 	return winner;

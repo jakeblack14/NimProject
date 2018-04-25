@@ -5,6 +5,8 @@
 #include <string>
 #include <WinSock2.h>
 
+using namespace std;
+
 int serverMain(int argc, char *argv[], std::string playerName)
 {
 	SOCKET s;
@@ -15,6 +17,8 @@ int serverMain(int argc, char *argv[], std::string playerName)
 	char yesStr[MAX_SEND_BUF];
 	char yes[MAX_SEND_BUF] = "YES";
 	char no[MAX_SEND_BUF] = "NO";
+	char test[MAX_SEND_BUF];
+	
 
 	
 	s = passivesock(NIM_UDPPORT,"udp");
@@ -47,6 +51,11 @@ int serverMain(int argc, char *argv[], std::string playerName)
 				if (yesStr[0] == 'y' || yesStr[0] == 'Y')
 				{
 					UDP_send(s, yes, strlen(responseStr) + 1, (char*)host.c_str(), (char*)port.c_str());
+
+					
+					cout << "Please Enter a string to initialize board (Mnn)" << endl;
+					cin >> test;
+
 				}
 				else
 				{
@@ -57,14 +66,14 @@ int serverMain(int argc, char *argv[], std::string playerName)
 				if (buffer[0] == 'g' || buffer[0] == 'G')
 				{
 
-					int winner = playTicTacToe(s, (char*)playerName.c_str(), (char*)host.c_str(), (char*)port.c_str(), O_PLAYER);
+					int winner = playTicTacToe(s, (char*)playerName.c_str(), (char*)host.c_str(), (char*)port.c_str(), O_PLAYER, test);
 					finished = true;
 				}
 			}
 			
 			// Play the game.  You are the 'O' player
-			int winner = playTicTacToe(s, (char*) playerName.c_str(), (char*)host.c_str(), (char*)port.c_str(), O_PLAYER);
-			finished = true;
+			//int winner = playTicTacToe(s, (char*) playerName.c_str(), (char*)host.c_str(), (char*)port.c_str(), O_PLAYER, test);
+			//finished = true;
 		}
 
 		if (!finished) {
