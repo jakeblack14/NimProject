@@ -7,6 +7,7 @@
 
 int clientMain(int argc, char *argv[], std::string playerName)
 {
+	bool finished = false;
 	char yes[MAX_SEND_BUF] = "YES";
 	char no[MAX_SEND_BUF] = "NO";
 	char great[MAX_SEND_BUF] = "Great!";
@@ -72,17 +73,26 @@ int clientMain(int argc, char *argv[], std::string playerName)
 			strcpy_s(buffer, NIM_CHALLENGE);
 			strcat_s(buffer,playerName.c_str());
 			int len = UDP_send(s, buffer, strlen(buffer)+1,(char*)host.c_str(), (char*)port.c_str());
-			len = UDP_recv(s, received, MAX_RECV_BUF, (char*)host.c_str(), (char*)port.c_str());
-			if (received[0] == 'y' || received[0] == 'Y')
-			{
-				UDP_send(s, great, strlen(great) + 1, (char*)host.c_str(), (char*)port.c_str());
-				// Play the game.  You are the 'X' player
-
-				int len = UDP_recv(s, board, MAX_RECV_BUF, (char*)host.c_str(), (char*)port.c_str());
-
-				int winner = playTicTacToe(s, serverName, host, port, X_PLAYER, board);
-			}
+			
+			
 		}
+	}
+
+	while (!finished)
+	{
+		char stuff[MAX_RECV_BUF];
+		int len = UDP_recv(s, stuff, MAX_RECV_BUF, (char*)host.c_str(), (char*)port.c_str());
+		if (stuff[0] == 'Y' || stuff[0] == 'y')
+		{
+			UDP_send(s, great, strlen(great) + 1, (char*)host.c_str(), (char*)port.c_str());
+		}
+		else
+		{
+			finished = true;
+		}
+		len = UDP_recv(s, board, MAX_RECV_BUF, (char*)host.c_str(), (char*)port.c_str());
+		int winner = playTicTacToe(s, (char*)playerName.c_str(), (char*)host.c_str(), (char*)port.c_str(), O_PLAYER, board);
+		finished = true;
 	}
 
 	closesocket(s);
