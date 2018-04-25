@@ -171,7 +171,7 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 	rp = initializeBoard(test,totalRocks);
 	displayBoard(rp);
 
-	//int numSent = UDP_send(s, test, strlen(test) + 1, remoteIP.c_str(), remotePort.c_str());
+	int numSent = UDP_send(s, test, strlen(test) + 1, remoteIP.c_str(), remotePort.c_str());
 	
 
 	while (winner == noWinner) {
@@ -194,7 +194,7 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 
 			char moveMade[4];
 			itoa(move, moveMade, 10);
-			int numSent = UDP_send(s, moveMade, strlen(moveMade) + 1, remoteIP.c_str(), remotePort.c_str());
+			//int numSent = UDP_send(s, moveMade, strlen(moveMade) + 1, remoteIP.c_str(), remotePort.c_str());
 
 		}
 		else {

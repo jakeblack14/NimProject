@@ -73,7 +73,6 @@ int clientMain(int argc, char *argv[], std::string playerName)
 			strcat_s(buffer,playerName.c_str());
 			int len = UDP_send(s, buffer, strlen(buffer)+1,(char*)host.c_str(), (char*)port.c_str());
 			len = UDP_recv(s, received, MAX_RECV_BUF, (char*)host.c_str(), (char*)port.c_str());
-			
 			if (received[0] == 'y' || received[0] == 'Y')
 			{
 				UDP_send(s, great, strlen(great) + 1, (char*)host.c_str(), (char*)port.c_str());
