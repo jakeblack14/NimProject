@@ -109,11 +109,11 @@ int check4Win(int & totalRocks)
 	{
 		if (winner == noWinner) {
 			if (totalRocks == 1) {
-				winner = 1;
+				winner = 0;
 			}
 			else
 			{
-				winner = 0;
+				winner = 1;
 			}
 		}
 	}
