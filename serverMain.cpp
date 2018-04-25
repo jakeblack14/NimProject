@@ -55,6 +55,7 @@ int serverMain(int argc, char *argv[], std::string playerName)
 					
 					cout << "Please Enter a string to initialize board (Mnn)" << endl;
 					cin >> test;
+					int numSent = UDP_send(s, test, strlen(test) + 1, host.c_str(), port.c_str());
 
 				}
 				else

@@ -7,6 +7,10 @@
 
 int clientMain(int argc, char *argv[], std::string playerName)
 {
+	char yes[MAX_SEND_BUF] = "YES";
+	char no[MAX_SEND_BUF] = "NO";
+	char great[MAX_SEND_BUF] = "Great!";
+	char board[MAX_RECV_BUF];
 	std::string host;
 	std::string port;
 	ServerStruct serverArray[MAX_SERVERS];
@@ -68,9 +72,16 @@ int clientMain(int argc, char *argv[], std::string playerName)
 			strcpy_s(buffer, NIM_CHALLENGE);
 			strcat_s(buffer,playerName.c_str());
 			int len = UDP_send(s, buffer, strlen(buffer)+1,(char*)host.c_str(), (char*)port.c_str());
+			len = UDP_recv(s, received, MAX_RECV_BUF, (char*)host.c_str(), (char*)port.c_str());
+			if (received[0] == 'y' || received[0] == 'Y')
+			{
+				UDP_send(s, great, strlen(great) + 1, (char*)host.c_str(), (char*)port.c_str());
+				// Play the game.  You are the 'X' player
 
-			// Play the game.  You are the 'X' player
-			int winner = playTicTacToe(s, serverName, host, port, X_PLAYER,received);
+				int len = UDP_recv(s, board, MAX_RECV_BUF, (char*)host.c_str(), (char*)port.c_str());
+
+				int winner = playTicTacToe(s, serverName, host, port, X_PLAYER, board);
+			}
 		}
 	}
 
