@@ -232,6 +232,9 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 			winner = check4Win(totalRocks);
 		}
 		if (winner != -5)
+		{	
+		}
+		else
 		{
 			if (winner == localPlayer)
 				std::cout << "You WIN!" << std::endl;
