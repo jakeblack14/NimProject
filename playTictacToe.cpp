@@ -178,6 +178,8 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 	int totalRocks = 0;
 	bool myMove;
 	int opponentMove;
+	string comment;
+	string options;
 
 	if (localPlayer == X_PLAYER) {
 		std::cout << "Playing as player 1" << std::endl;
@@ -199,13 +201,23 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 	while (winner == noWinner) {
 		if (myMove) {
 			// Get my move & display board
-
-			// Probably need to to put the while loop here to check for comments. 
 			
-			move = getMove(rp.size(), localPlayer);
-			std::cout << "Board after your move:" << std::endl;
-			updateBoard(rp, move, localPlayer,totalRocks);
-			displayBoard(rp);
+			// Probably need to to put the while loop here to check for comments. 
+			cout << "To forfetit press F, To make your next move press M, to send a comment to another player press C";
+			cin >> options;
+			while (options[0] != 'M' || options[0] != 'm') {
+				if (options[0] == 'M' || options[0] == 'm')
+				{
+					move = getMove(rp.size(), localPlayer);
+					std::cout << "Board after your move:" << std::endl;
+					updateBoard(rp, move, localPlayer, totalRocks);
+					displayBoard(rp);
+				}
+				else if (options[0] == 'C' || options[0] == 'c') 
+				{
+
+				}
+			}
 
 			// Send move to opponent
 			/****
@@ -230,10 +242,25 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 				char recvBuf[MAX_RECV_BUF];
 				char remoteHost[v4AddressSize];
 				char remote_Port[portNumberSize];
-				int numRecv = UDP_recv(s, recvBuf, MAX_RECV_BUF - 1, remoteHost, remote_Port);
-				    opponentMove = atoi(recvBuf);
-				updateBoard(rp, opponentMove, opponent,totalRocks);
-				displayBoard(rp);
+				do 
+				{
+
+					int numRecv = UDP_recv(s, recvBuf, MAX_RECV_BUF - 1, remoteHost, remote_Port);
+					if (recvBuf[0] == 'C') 
+					{
+						numRecv = UDP_recv(s, recvBuf, MAX_RECV_BUF - 1, remoteHost, remote_Port);
+						cout << recvBuf << endl;
+					}
+					if (recvBuf[0] == 'M') 
+					{
+						numRecv = UDP_recv(s, recvBuf, MAX_RECV_BUF - 1, remoteHost, remote_Port);
+						opponentMove = atoi(recvBuf);
+						updateBoard(rp, opponentMove, opponent, totalRocks);
+						displayBoard(rp);
+					}
+				
+				} while (!isdigit(recvBuf[0]));
+				
 				/****
 				Task 2: (i) Insert code inside this IF statement that will accept a null-terminated C-string from your
 				opponent that represents their move.  Convert that string to an integer and then
