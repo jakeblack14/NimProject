@@ -148,17 +148,22 @@ int getMove(int numPiles, int Player)
 	string pileString;
 	int pileNumber;
 
-	std::cout << "What Pile and How Many Rocks do you want to take? ";
+	cout << "What Pile and How Many Rocks do you want to take? ";
+	cin >> move_str;
+	pileString = move_str.substr(0, 1);
+	move = atoi(move_str.c_str());
+	pileNumber = stoi(pileString);
 
-	do {
-		std::cin >> move_str;
+	while (pileNumber < 3 || pileNumber > numPiles)
+	{
+		cout << "Incorrect pile selection. Please try again." << endl;
+		cin >> move_str;
 		pileString = move_str.substr(0, 1);
 		move = atoi(move_str.c_str());
 		pileNumber = stoi(pileString);
 
-
 		// Check here to see if they can pick from that pile or not. if (board[move] == 'X' || board[move] == 'O') move = 0;
-	} while (pileNumber < 1 || pileNumber > numPiles); // Change this to check boundaries of the piles.
+	}  // Change this to check boundaries of the piles.
 
 	return move;
 }
@@ -202,12 +207,6 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 			std::cout << "Board after your move:" << std::endl;
 			updateBoard(rp, move, localPlayer,totalRocks);
 			displayBoard(rp);
-
-			// Send move to opponent
-			/****
-			Task 1: "move" is an integer that was assigned a value (from 1 to 9) in the previous code segment.
-			Add code here to convert "move" to a null-terminated C-string and send it to your opponent at remoteIP using remotePort.
-			****/
 			std::string moveString = std::to_string(move);
 
 			char moveMade[4];
@@ -231,12 +230,6 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 				updateBoard(rp, opponentMove, opponent,totalRocks);
 				displayBoard(rp);
 				winner = check4Win(totalRocks, myMove, localPlayer, opponent);
-				/****
-				Task 2: (i) Insert code inside this IF statement that will accept a null-terminated C-string from your
-				opponent that represents their move.  Convert that string to an integer and then
-				(ii) call a function that will update the game board (see above) using your opponent's move, and
-				(iii) call a function that will display the updated board on your screen.
-				****/
 			}
 			else {
 				winner = ABORT;
