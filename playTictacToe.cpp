@@ -108,7 +108,7 @@ void displayBoard(vector<RockPile> rp)
 	std::cout << std::endl;
 }
 
-int check4Win(int & totalRocks, int numPiles, bool myMove)
+int check4Win(int & totalRocks, int numPiles, bool myMove, int localPlayer, int opponent)
 {
 	int winner = noWinner;
 	if (!myMove)
@@ -116,11 +116,11 @@ int check4Win(int & totalRocks, int numPiles, bool myMove)
 		if (totalRocks <= 1 || numPiles == 1)
 		{
 			if (totalRocks <= 1 || numPiles == 1) {
-				winner = 2;
+				winner = opponent;
 			}
 			else
 			{
-				winner = 1;
+				winner = localPlayer;
 			}
 		}
 	}
@@ -130,11 +130,11 @@ int check4Win(int & totalRocks, int numPiles, bool myMove)
 		if (totalRocks <= 1 || numPiles == 1)
 		{
 			if (totalRocks <= 1 || numPiles == 1) {
-				winner = 1;
+				winner = localPlayer;
 			}
 			else
 			{
-				winner = 2;
+				winner = opponent;
 			}
 		}
 	}
@@ -217,7 +217,7 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 			char moveMade[4];
 			itoa(move, moveMade, 10);
 			int numSent = UDP_send(s, moveMade, strlen(moveMade) + 1, remoteIP.c_str(), remotePort.c_str());
-			winner = check4Win(totalRocks, numPiles, myMove);
+			//winner = check4Win(totalRocks, numPiles, myMove);
 		}
 		else {
 			std::cout << "Waiting for your opponent's move..." << std::endl << std::endl;
@@ -251,7 +251,7 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 			std::cout << timestamp() << " - No response from opponent.  Aborting the game..." << std::endl;
 		}
 		else {
-			winner = check4Win(totalRocks, numPiles, myMove);
+			winner = check4Win(totalRocks, numPiles, myMove, localPlayer, opponent);
 		}
 	
 		if(winner != -5)
