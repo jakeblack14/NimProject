@@ -64,7 +64,10 @@ void updateBoard(vector<RockPile> & rp, int move, int Player, int & totalRocks)
 
 	pile = stoi(myPile);
 	numRocks = stoi(myRocks);
-
+	if (rp[pile - 1].numRocks < numRocks)
+	{
+		numRocks = rp[pile - 1].numRocks;
+	}
 
 	rp[pile - 1].numRocks = rp[pile - 1].numRocks - numRocks;
 	totalRocks -= numRocks;
@@ -142,7 +145,7 @@ int getMove(int numPiles, int Player)
 	move = atoi(move_str.c_str());
 	pileNumber = stoi(pileString);
 
-	while (pileNumber < 3 || pileNumber > numPiles)
+	while (pileNumber < 1 || pileNumber > numPiles)
 	{
 		cout << "Incorrect pile selection. Please try again." << endl;
 		cin >> move_str;
@@ -186,32 +189,57 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 		if (myMove) {
 			// Get my move & display board
 			// Probably need to to put the while loop here to check for comments. 
-			cout << "To forfetit press F, To make your next move press M, to send a comment to another player press C";
-			cin >> options;
-			while (options[0] != 'M' || options[0] != 'm') {
-				if (options[0] == 'M' || options[0] == 'm')
+			bool moved = false;
+			
+			do {
+				cout << "To forfeit press F, To make your next move press M, to send a comment to another player press C" << endl;
+				cin >> options;
+				char selectedOption[MAX_SEND_BUF];
+				strcpy(selectedOption, options.c_str());
+
+				switch (selectedOption[0])
 				{
+				case 'M':
+				case 'm':
+					UDP_send(s, selectedOption, strlen(selectedOption), remoteIP.c_str(), remotePort.c_str());
 					move = getMove(rp.size(), localPlayer);
 					std::cout << "Board after your move:" << std::endl;
 					updateBoard(rp, move, localPlayer, totalRocks);
 					displayBoard(rp);
-				}
-				else if (options[0] == 'C' || options[0] == 'c') 
-				{
+					moved = true;
+					break;
+				case 'C':
+				case 'c':
+					cout << "Send a comment: ";
+					cin.ignore();
+					getline(cin, comment);
+					comment.insert(0, "C");
+					char commentSent[MAX_SEND_BUF];
+					strcpy(commentSent, comment.c_str());
+					UDP_send(s, commentSent, strlen(commentSent), remoteIP.c_str(), remotePort.c_str());
+					break;
 
-				}
-			}
+				case 'F':
+				case 'f':
+					moved = true;
+					winner = opponent;
+					UDP_send(s, selectedOption, strlen(selectedOption), remoteIP.c_str(), remotePort.c_str());
+					break;
 
-			move = getMove(rp.size(), localPlayer);
-			std::cout << "Board after your move:" << std::endl;
-			updateBoard(rp, move, localPlayer,totalRocks);
-			displayBoard(rp);
+				default:
+					cout << "Please input a valid option." << endl;
+					break;
+				}
+			} while (!moved);
 			std::string moveString = std::to_string(move);
 
 			char moveMade[4];
 			itoa(move, moveMade, 10);
 			int numSent = UDP_send(s, moveMade, strlen(moveMade) + 1, remoteIP.c_str(), remotePort.c_str());
-			winner = check4Win(totalRocks, myMove, localPlayer, opponent);
+			if (winner == noWinner)
+			{
+				winner = check4Win(totalRocks, myMove, localPlayer, opponent);
+			}
 		}
 		else {
 			std::cout << "Waiting for your opponent's move..." << std::endl << std::endl;
@@ -224,30 +252,37 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 				char recvBuf[MAX_RECV_BUF];
 				char remoteHost[v4AddressSize];
 				char remote_Port[portNumberSize];
+				bool moved = false;
+				
 				do 
 				{
 
 					int numRecv = UDP_recv(s, recvBuf, MAX_RECV_BUF - 1, remoteHost, remote_Port);
 					if (recvBuf[0] == 'C') 
 					{
-						numRecv = UDP_recv(s, recvBuf, MAX_RECV_BUF - 1, remoteHost, remote_Port);
-						cout << recvBuf << endl;
+						string commentRecvd(recvBuf);
+						commentRecvd.erase(0, 1);
+						cout << commentRecvd << endl;
 					}
-					if (recvBuf[0] == 'M') 
+					if (recvBuf[0] == 'M' || recvBuf[0] == 'm') 
 					{
 						numRecv = UDP_recv(s, recvBuf, MAX_RECV_BUF - 1, remoteHost, remote_Port);
 						opponentMove = atoi(recvBuf);
 						updateBoard(rp, opponentMove, opponent, totalRocks);
 						displayBoard(rp);
+						moved = true;
+					}
+					if (recvBuf[0] == 'F' || recvBuf[0] == 'f')
+					{
+						moved = true;
+						winner = localPlayer;
 					}
 				
-				} while (!isdigit(recvBuf[0]));
-				
-				int numRecv = UDP_recv(s, recvBuf, MAX_RECV_BUF - 1, remoteHost, remote_Port);
-				    opponentMove = atoi(recvBuf);
-				updateBoard(rp, opponentMove, opponent,totalRocks);
-				displayBoard(rp);
-				winner = check4Win(totalRocks, myMove, localPlayer, opponent);
+				} while (!moved);
+				if (winner == noWinner)
+				{
+					winner = check4Win(totalRocks, myMove, localPlayer, opponent);
+				}
 			}
 			else {
 				winner = ABORT;
