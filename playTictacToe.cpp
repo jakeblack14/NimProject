@@ -10,11 +10,11 @@
 
 using namespace std;
 
-int numPiles;
+
 
 std::vector<RockPile> initializeBoard(string test, int & totalRocks)
 {
-	
+	int numPiles;
 	
 	std::string numPilesStr;
 
@@ -80,10 +80,6 @@ void updateBoard(vector<RockPile> & rp, int move, int Player, int & totalRocks)
 
 	rp[pile - 1].numRocks = rp[pile - 1].numRocks - numRocks;
 	totalRocks -= numRocks;
-	if (rp[pile - 1].numRocks == 0)
-	{
-		numPiles--;
-	}
 }
 
 void displayBoard(vector<RockPile> rp)
@@ -256,8 +252,6 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 		{
 			if (winner == localPlayer)
 				std::cout << "You WIN!" << std::endl;
-			else if (winner == TIE)
-				std::cout << "It's a tie." << std::endl;
 			else if (winner == opponent)
 				std::cout << "I'm sorry.  You lost" << std::endl;
 		}
