@@ -18,9 +18,6 @@ std::vector<RockPile> initializeBoard(string test, int & totalRocks)
 	
 	std::string numPilesStr;
 
-	// ADD CODE HERE TO CHECK THE BOUNDARIES
-
-
 	numPilesStr = test.substr(0, 1);
 	test.erase(0, 1);
 	numPiles = stoi(numPilesStr);
@@ -37,15 +34,6 @@ std::vector<RockPile> initializeBoard(string test, int & totalRocks)
 
 		totalRocks += rp[i].numRocks;
 	}
-	//do {
-	//	std::cout << "pile num: ";
-	//	std::cin >> rp.pileNum;
-	//	if (rp.pileNum < 3 || rp.pileNum > 9)
-	//	{
-	//		std::cout << "The number of rock piles must be between 3 and 9, please enter a new number..." << std::endl;
-	//		pileGood = false;
-	//	}
-	//} while (pileGood != true);
 
 	return rp;
 }
@@ -161,9 +149,7 @@ int getMove(int numPiles, int Player)
 		pileString = move_str.substr(0, 1);
 		move = atoi(move_str.c_str());
 		pileNumber = stoi(pileString);
-
-		// Check here to see if they can pick from that pile or not. if (board[move] == 'X' || board[move] == 'O') move = 0;
-	}  // Change this to check boundaries of the piles.
+	} 
 
 	return move;
 }
@@ -194,16 +180,11 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 	}
 
 	rp = initializeBoard(test,totalRocks);
-	displayBoard(rp);
-
-	//int numSent = UDP_send(s, test, strlen(test) + 1, remoteIP.c_str(), remotePort.c_str());
-	
+	displayBoard(rp);	
 
 	while (winner == noWinner) {
 		if (myMove) {
 			// Get my move & display board
-			
-<<<<<<< HEAD
 			// Probably need to to put the while loop here to check for comments. 
 			cout << "To forfetit press F, To make your next move press M, to send a comment to another player press C";
 			cin >> options;
@@ -221,17 +202,10 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 				}
 			}
 
-			// Send move to opponent
-			/****
-			Task 1: "move" is an integer that was assigned a value (from 1 to 9) in the previous code segment.
-			Add code here to convert "move" to a null-terminated C-string and send it to your opponent at remoteIP using remotePort.
-			****/
-=======
 			move = getMove(rp.size(), localPlayer);
 			std::cout << "Board after your move:" << std::endl;
 			updateBoard(rp, move, localPlayer,totalRocks);
 			displayBoard(rp);
->>>>>>> 834b123cad7023d707a931c51f8016041c3d5487
 			std::string moveString = std::to_string(move);
 
 			char moveMade[4];
@@ -250,7 +224,6 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 				char recvBuf[MAX_RECV_BUF];
 				char remoteHost[v4AddressSize];
 				char remote_Port[portNumberSize];
-<<<<<<< HEAD
 				do 
 				{
 
@@ -270,19 +243,11 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 				
 				} while (!isdigit(recvBuf[0]));
 				
-				/****
-				Task 2: (i) Insert code inside this IF statement that will accept a null-terminated C-string from your
-				opponent that represents their move.  Convert that string to an integer and then
-				(ii) call a function that will update the game board (see above) using your opponent's move, and
-				(iii) call a function that will display the updated board on your screen.
-				****/
-=======
 				int numRecv = UDP_recv(s, recvBuf, MAX_RECV_BUF - 1, remoteHost, remote_Port);
 				    opponentMove = atoi(recvBuf);
 				updateBoard(rp, opponentMove, opponent,totalRocks);
 				displayBoard(rp);
 				winner = check4Win(totalRocks, myMove, localPlayer, opponent);
->>>>>>> 834b123cad7023d707a931c51f8016041c3d5487
 			}
 			else {
 				winner = ABORT;
