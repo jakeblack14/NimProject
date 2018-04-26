@@ -35,7 +35,6 @@ struct RockPile {
 	int numRocks;
 };
 
-void playNim(SOCKET, bool, char*, bool, bool, char*, char*, bool);
 SOCKET connectsock(const char*, const char*, const char*);
 SOCKET passivesock(const char*, const char*);
 int UDP_recv(SOCKET, char*, int, char*, char*);
@@ -43,7 +42,7 @@ int UDP_send(SOCKET, char*, int, const char*, const char*);
 int wait(SOCKET, int, int);
 char* timestamp();
 int getServers(SOCKET, char*, char*, ServerStruct[]);
-int playTicTacToe(SOCKET, std::string, std::string, std::string, int, char*);
+int playNim(SOCKET, std::string, std::string, std::string, int, char*);
 int serverMain(int, char *argv[], std::string);
 int clientMain(int, char *argv[], std::string);
 int getIPAddressInfo(char*, char*);

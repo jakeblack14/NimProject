@@ -89,7 +89,7 @@ int clientMain(int argc, char *argv[], std::string playerName)
 			finished = true;
 		}
 		len = UDP_recv(s, board, MAX_RECV_BUF, (char*)host.c_str(), (char*)port.c_str());
-		int winner = playTicTacToe(s, (char*)playerName.c_str(), (char*)host.c_str(), (char*)port.c_str(), X_PLAYER, board);
+		int winner = playNim(s, (char*)playerName.c_str(), (char*)host.c_str(), (char*)port.c_str(), X_PLAYER, board);
 		finished = true;
 	}
 	closesocket(s);
