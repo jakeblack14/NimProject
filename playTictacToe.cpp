@@ -108,14 +108,14 @@ void displayBoard(vector<RockPile> rp)
 	std::cout << std::endl;
 }
 
-int check4Win(int & totalRocks, int numPiles, bool myMove, int localPlayer, int opponent)
+int check4Win(int & totalRocks, bool myMove, int localPlayer, int opponent)
 {
 	int winner = noWinner;
 	if (!myMove)
 	{
-		if (totalRocks <= 1 || numPiles == 1)
+		if (totalRocks  == 0)
 		{
-			if (totalRocks <= 1 || numPiles == 1) {
+			if (totalRocks == 0) {
 				winner = opponent;
 			}
 			else
@@ -127,9 +127,9 @@ int check4Win(int & totalRocks, int numPiles, bool myMove, int localPlayer, int 
 
 	else if (myMove)
 	{
-		if (totalRocks <= 1 || numPiles == 1)
+		if (totalRocks == 0)
 		{
-			if (totalRocks <= 1 || numPiles == 1) {
+			if (totalRocks == 0) {
 				winner = localPlayer;
 			}
 			else
@@ -217,7 +217,7 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 			char moveMade[4];
 			itoa(move, moveMade, 10);
 			int numSent = UDP_send(s, moveMade, strlen(moveMade) + 1, remoteIP.c_str(), remotePort.c_str());
-			//winner = check4Win(totalRocks, numPiles, myMove);
+			winner = check4Win(totalRocks, myMove, localPlayer, opponent);
 		}
 		else {
 			std::cout << "Waiting for your opponent's move..." << std::endl << std::endl;
@@ -234,6 +234,7 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 				    opponentMove = atoi(recvBuf);
 				updateBoard(rp, opponentMove, opponent,totalRocks);
 				displayBoard(rp);
+				winner = check4Win(totalRocks, myMove, localPlayer, opponent);
 				/****
 				Task 2: (i) Insert code inside this IF statement that will accept a null-terminated C-string from your
 				opponent that represents their move.  Convert that string to an integer and then
@@ -249,9 +250,6 @@ int playTicTacToe(SOCKET s, std::string serverName, std::string remoteIP, std::s
 
 		if (winner == ABORT) {
 			std::cout << timestamp() << " - No response from opponent.  Aborting the game..." << std::endl;
-		}
-		else {
-			winner = check4Win(totalRocks, numPiles, myMove, localPlayer, opponent);
 		}
 	
 		if(winner != -5)

@@ -72,7 +72,6 @@ int serverMain(int argc, char *argv[], std::string playerName)
 				
 				if (buffer[0] == 'g' || buffer[0] == 'G')
 				{
-
 					int winner = playTicTacToe(s, (char*)playerName.c_str(), (char*)host.c_str(), (char*)port.c_str(), O_PLAYER, test);
 					finished = true;
 				}
